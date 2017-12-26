@@ -9,6 +9,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import withConnect from './withConnect';
+import ButtonLoginFB from './ButtonLoginFB';
 // 
 @withConnect
 export default class BookingCar extends React.PureComponent {
@@ -35,6 +36,7 @@ constructor(props) {
         <Text style={styles.instructions}>
           {'instructions'}
         </Text>
+        <ButtonLoginFB />
       </View>
     );
   }
