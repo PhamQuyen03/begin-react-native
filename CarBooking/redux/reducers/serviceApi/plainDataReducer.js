@@ -32,7 +32,6 @@ export default function plainDataReducer(state, action) {
 
     // Decide to override or append data
     const data = appendData === true ? [...oldData, ...newData] : newData;
-
     return {
       ...state,
       [dataKey]: { ...bundle, data, hasMore: !_.isEmpty(newData), loading: false },

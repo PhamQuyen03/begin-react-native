@@ -5,10 +5,11 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, Button, StyleSheet } from 'react-native';
 
 import FBSDK from 'react-native-fbsdk';
 import firebase from 'firebase';
+import { FACEBOOK_PERMISSIONS } from '../../../redux/constants';
 
 const { LoginButton, AccessToken, LoginManager } = FBSDK;
 const configure = {
@@ -22,21 +23,32 @@ const configure = {
 firebase.initializeApp(configure);
 
 export default class ButtonLoginFB extends React.PureComponent {
-  // componentDidMount() {
-  //   AccessToken.getCurrentAccessToken().then(
-  //     (data) => {
-  //       console.log(data.accessToken.toString());
-  //     }
-  //   )
-  // }
+
+  componentDidMount() {
+      AccessToken.getCurrentAccessToken().then((data) => {
+        console.log('token', data);      
+      });
+  }
   handlerLoginFb = () => {
-    LoginManager.logInWithReadPermissions(['public_profile']).then(
+    LoginManager.logInWithReadPermissions(FACEBOOK_PERMISSIONS).then(
       (result) => {
         if (result.isCancelled) {
           alert('Login was cancelled');
         } else {
-          alert(`Login was successful with permissions: ${
-             result.grantedPermissions.toString()}`);
+          AccessToken.getCurrentAccessToken().then((data) => {
+            const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+            firebase.auth().signInWithCredential(credential).then(result => {
+              console.log('result', result);
+            }, (error) => {
+            // do something
+              console.log('error1', error);
+            });
+            // alert(data.accessToken.toString())
+          }, (error) => {
+            // do something
+            console.log('error2', error);            
+          }
+        );
         }
       },
       (error) => {
@@ -46,8 +58,8 @@ export default class ButtonLoginFB extends React.PureComponent {
   }
   render() {
     return (
-      <View>
-        <LoginButton
+      <View style={styles.container}>
+        {/* <LoginButton
           publishPermissions={['publish_actions']}
           onLoginFinished={
             (error, result) => {
@@ -57,14 +69,9 @@ export default class ButtonLoginFB extends React.PureComponent {
                 alert('login is cancelled.');
               } else {
                 AccessToken.getCurrentAccessToken().then((data) => {
-                    console.log('token', data.accessToken);
                     const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
                     firebase.auth().signInWithCredential(credential).then(result => {
-                      LoginManager.logInWithReadPermissions(['public_profile', 'email']);
-                      console.log('manager', LoginManager.getDefaultAudience().then(data => console.log('data', data)));
-                    // do something
-                      // const user = result.toString();
-                      // alert("login succes.", result.toString());
+                      LoginManager.logInWithReadPermissions(FACEBOOK_PERMISSIONS);
                     }, (error) => {
                     // do something
                     });
@@ -77,9 +84,23 @@ export default class ButtonLoginFB extends React.PureComponent {
             }
           }
           onLogoutFinished={() => {}}
+        /> */}
+        <Button
+          onPress={this.handlerLoginFb}
+          title="Login Facebook"
+          color="#3b5998"
+          accessibilityLabel="Learn more about this purple button"
         />
       </View>
     );
   }
 }
 
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    marginBottom: 10,
+  },
+});

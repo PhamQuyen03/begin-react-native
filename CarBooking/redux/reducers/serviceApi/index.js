@@ -24,6 +24,7 @@ const DEFAULT_ARRAY_DATA = { data: [], hasMore: false, ...DEFAULT_REQUEST_STATUS
 
 const DEFAULT_STATES = {
   articleCategories: DEFAULT_ARRAY_DATA,
+  test: DEFAULT_ARRAY_DATA,
 };
 
 export default function serviceApiReducer(state = DEFAULT_STATES, action) {
